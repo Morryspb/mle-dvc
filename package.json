@@ -1,0 +1,8 @@
+{
+  "devDependencies": {
+    "rimraf": "^6.0.1"
+  },
+  "scripts": {
+    "clean": "./node_modules/.bin/rimraf dist && ./node_modules/.bin/rimraf nbextension && ./node_modules/.bin/rimraf labextension"
+  }
+}
