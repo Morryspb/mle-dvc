@@ -1,0 +1,8 @@
+[core]
+    autostage = true
+    remote = my_storage
+['remote "my_storage"']
+    url = s3://s3-student-mle-20250709-8d00f86509
+    profile = default
+    endpointurl = https://storage.yandexcloud.net
+    region = ru-central1
