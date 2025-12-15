@@ -1,0 +1,54 @@
+# dvc.yaml
+# Файл описывает пайплайн машинного обучения: этапы, их зависимости, параметры и выходы.
+# DVC использует этот файл для воспроизведения экспериментов (dvc repro).
+
+
+stages:  # Все этапы пайплайна
+
+  # Этап 1: Загрузка данных
+  get_data:
+    cmd: python scripts/data.py  # Команда для запуска этапа
+    deps:  # Зависимости: если они изменятся, этап перестроится
+      - scripts/data.py           # Скрипт, который загружает/обрабатывает данные
+    params:  # Параметры из params.yaml, влияющие на этап
+      - index_col                 # Колонка индекса (из params.yaml)
+      - retrain                   # Флаг переобучения (из params.yaml)
+    outs:  # Выходы этапа: созданные файлы, которые отслеживает DVC
+      - data/initial_data.csv    # Путь к сохранённым данным
+
+
+  # Этап 2: Обучение модели
+  fit_model:
+    cmd: python scripts/fit.py  # Запускает скрипт обучения
+    deps:  # Зависимости этапа
+      - data/initial_data.csv   # Данные из предыдущего этапа
+      - scripts/fit.py          # Сам скрипт обучения
+    params:  # Параметры, используемые в скрипте fit.py
+      - index_col               # Колонка индекса
+      - target_col              # Имя целевой колонки (например, 'target')
+      - one_hot_drop            # Стратегия drop для OneHotEncoder (например, 'if_binary')
+      - auto_class_weights      # Веса классов (если используется)
+      - retrain                 # Флаг переобучения
+      #отсюда новые параметры
+      - model.C
+      - model.penalty
+      - preprocessing.categorical_encoder
+    outs:  # Выход этапа — обученная модель
+      - models/fitted_model.pkl   # Сохранённый пайплайн (модель + препроцессинг)
+
+
+  # Этап 3: Оценка модели
+  evaluate_model:
+    cmd: python scripts/evaluate.py  # Скрипт оценки (кросс-валидация, метрики)
+    deps:  # Зависимости
+      - models/fitted_model.pkl       # Обученная модель из этапа fit_model
+      - scripts/evaluate.py            # Скрипт оценки
+    params:  # Параметры для оценки
+      - index_col                   # Колонка индекса
+      - target_col                # Имя целевой колонки
+      - n_splits                  # Число разбиений в кросс-валидации
+      - n_jobs                    # Число параллельных задач
+      - metrics                   # Список метрик 
+      - retrain                   # Флаг переобучения
+    outs:  # Выход — результаты оценки
+      - cv_results/cv_res.json    # JSON-файл с метриками кросс-валидации
