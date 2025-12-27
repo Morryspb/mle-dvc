@@ -1,4 +1,4 @@
-0d00bce45880e76a361fd7ce801173d3 schema: '2.0'
+schema: '2.0'
 stages:
   get_data:
     cmd: python scripts/data.py
