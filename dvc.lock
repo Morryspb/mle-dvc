@@ -40,14 +40,14 @@ stages:
     outs:
     - path: models/fitted_model.pkl
       hash: md5
-      md5: 2e2706190b6fa4c561283eac661492f5
+      md5: 0d00bce45880e76a361fd7ce801173d3
       size: 9629
   evaluate_model:
     cmd: python scripts/evaluate.py
     deps:
     - path: models/fitted_model.pkl
       hash: md5
-      md5: 2e2706190b6fa4c561283eac661492f5
+      md5: 0d00bce45880e76a361fd7ce801173d3
       size: 9629
     - path: scripts/evaluate.py
       hash: md5
