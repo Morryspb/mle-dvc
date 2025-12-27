@@ -54,13 +54,22 @@ def fit_model():
     print(f"Числовые признаки:\n{num_features_list}")
 
 
-    # 3.5 — Создание модели (LogisticRegression)
-    model = LogisticRegression(
-        C=1,
-        penalty='l2',
-        solver='liblinear',
-        random_state=params.get('random_state', 42)
-    )
+    # 3.5 — Создание модели с использованием параметров из params.yaml
+    model_params = params['model']
+    estimator_name = model_params['estimator']
+
+    if estimator_name == 'logistic_regression':
+        model = LogisticRegression(
+            C=model_params['C'],
+            penalty=model_params['penalty'],
+            solver=model_params['solver'],
+            random_state=model_params.get('random_state', 42)
+        )
+    else:
+        raise ValueError(f"Unsupported model estimator: {estimator_name}")
+
+    print(f"Модель инициализирована: {estimator_name} с параметрами C={model_params['C']}, penalty={model_params['penalty']}")
+
 
     # 3.6 — Создание пайплайна
     preprocessor = ColumnTransformer(
